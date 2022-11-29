@@ -1,22 +1,10 @@
 from PyQt5.QtWidgets import *
-from selectRoom import RoomSelect
-from offlineGame import OfflineGame
 
-class ModOption(QDialog, QWidget):
+
+class MakeRoom(QDialog, QWidget):
 
     def click(self):
-        if self.sender().text() == "online":
-            self.hide()
-            room = RoomSelect()
-            room.show()
-            room.exec()
-            self.show()
-        else:
-            self.hide()
-            game = OfflineGame()
-            game.show()
-            game.exec()
-            self.show()
+        pass
 
     def __init__(self, parent=None):
         super().__init__(parent)
