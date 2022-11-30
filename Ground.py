@@ -1,9 +1,13 @@
 class Piece:
-    def __init__(self, isEnemy, x, y, isIn):
+
+    #
+
+    def __init__(self, isEnemy, x, y, isIn, piece):
         self.isEnemy = isEnemy
         self.x = x
         self.y = y
         self.isIn = isIn
+        self.piece = piece
 
 
 class Ground:
