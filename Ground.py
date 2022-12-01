@@ -71,5 +71,6 @@ class Ground:
                     return True
                 else: return False   
 
-        if Piece.x == xx and Piece.y == yy and Piece.isIn == True : # 가려는 장소에 말이 있으면 불가능
+        if color == Piece.color and Piece.x == xx and Piece.y == yy and Piece.isIn == True : 
+            # 가려는 장소에 같은 팀 말이 있으면 불가능
             return False
