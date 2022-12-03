@@ -1,12 +1,23 @@
 from jangi_const import *
 from jangi import *
+import pygame
 
 jangi = Jangi()
 jangi.print_board()
 print('Turn:', jangi.turn)
+# 텍스트 디스플레이 함수
+def draw_text(txt, size, pos, color):
+    font = pygame.font.Font('freesansbold.ttf', size)
+    r = font.render(txt, True, color)
+    jangi.display.SURFACE.blit(r, pos)
 
+pygame.init()
+pygame.display.set_caption("십이장기")
+clock = pygame.time.Clock()
+FPS = 60
 
 while jangi.running:
+    dt = clock.tick(FPS) # 추후 사용이 될까싶어 일단 만들어놓음
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             jangi.running = False
@@ -52,9 +63,14 @@ while jangi.running:
             jangi.print_board()
             print('Turn:', jangi.turn)
             print('--------------------------------')
-            
-
-
+    # 턴 당 시간초 디스플레이
+    remainingTime = 90 - (time.time() - jangi.start_time)
+    txt = f"Time: {remainingTime:.1f}"
+    jangi.display.SURFACE.fill((100,100,100))
+    draw_text(txt, 32, (10,10), (255, 255, 255))
+    # 아이템 디스플레이
+    jangi.display.SURFACE.blit(jangi.display.img_item_time, (0*JANGI_BOARD_CELL_PIXELS+JANGI_BOARD_PADDING, 4*JANGI_BOARD_CELL_PIXELS+JANGI_BOARD_PADDING+25))
+    jangi.display.SURFACE.blit(jangi.display.img_item_mulligan, (2*JANGI_BOARD_CELL_PIXELS+JANGI_BOARD_PADDING, 4*JANGI_BOARD_CELL_PIXELS+JANGI_BOARD_PADDING+25))
     #drawing the board
     for i in range(4):
         for j in range(3):

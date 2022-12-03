@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import math
 from jangi_const import *
+import time
 
 class Input:
     def __init__(self):
@@ -29,6 +30,9 @@ class Display:
         self.img_piece_sang = pygame.image.load(JANGI_PIECE_IMAGE_SANG)
         self.img_piece_jang = pygame.image.load(JANGI_PIECE_IMAGE_JANG)
 
+        self.img_item_time = pygame.image.load(JANGI_ITEM_IMAGE_TIME)
+        self.img_item_mulligan = pygame.image.load(JANGI_ITEM_IMAGE_MULLIGAN)
+
         self.you_piece_list = []
         self.me_piece_list = []
         self.prep_piece_picture()
@@ -41,18 +45,19 @@ class Display:
         self.img_piece_sang = pygame.transform.scale(self.img_piece_sang, (JANGI_PIECES_PIXELS,JANGI_PIECES_PIXELS))
         self.img_piece_jang = pygame.transform.scale(self.img_piece_jang, (JANGI_PIECES_PIXELS,JANGI_PIECES_PIXELS))
         
-
-        # 리스트에 이미지 보관
+        self.img_item_time = pygame.transform.scale(self.img_item_time, (JANGI_BOARD_CELL_PIXELS,JANGI_BOARD_CELL_PIXELS))
+        self.img_item_mulligan = pygame.transform.scale(self.img_item_mulligan, (JANGI_BOARD_CELL_PIXELS,JANGI_BOARD_CELL_PIXELS))
+        # 리스트에 이미지 보관 (+ 포로 기능을 추가하면 '후'도 추가해야함)
         # 내 리스트
         self.me_piece_list.append(self.img_piece_ja)
         self.me_piece_list.append(self.img_piece_sang)
         self.me_piece_list.append(self.img_piece_wang)
         self.me_piece_list.append(self.img_piece_jang)
         # 상대 리스트 (추후 한자를 뒤집는다거나 색깔을 바꾸어 차이를 줄 예정)
-        self.you_piece_list.append(self.img_piece_ja)
-        self.you_piece_list.append(self.img_piece_sang)
-        self.you_piece_list.append(self.img_piece_wang)
-        self.you_piece_list.append(self.img_piece_jang)
+        self.you_piece_list.append(pygame.transform.rotate(self.img_piece_ja, 180))
+        self.you_piece_list.append(pygame.transform.rotate(self.img_piece_sang, 180))
+        self.you_piece_list.append(pygame.transform.rotate(self.img_piece_wang, 180))
+        self.you_piece_list.append(pygame.transform.rotate(self.img_piece_jang, 180))
 #############################################################################################################
 class Piece:
     def __init__(self, camp, type, pos, num):
@@ -61,7 +66,7 @@ class Piece:
         self.__pos = pos
         self.__num = num
         self.__alive = True
-        self.__moved = False
+        #self.__moved = False
     def getType(self):
         return self.__type
     def setType(self, type):
@@ -78,10 +83,10 @@ class Piece:
         return self.__num
     def setNum(self, num):
         self.__num = num
-    def getMoved(self):
-        return self.__moved
-    def setMoved(self, moved):
-        self.__moved = moved  
+    #def getMoved(self):
+     #   return self.__moved
+    #def setMoved(self, moved):
+     #   self.__moved = True  
     def get_alive(self):
         return self.__alive
     def setAlive(self, alive):
@@ -99,15 +104,15 @@ class Team:
          # 상대 팀일 경우
         if self.__team == YOU:
             self.__pieces.append(Piece(self.__team, JA, [1, 1], 1))
-            self.__pieces.append(Piece(self.__team, SANG, [0, 0], 2))
+            self.__pieces.append(Piece(self.__team, SANG, [0, 2], 2))
             self.__pieces.append(Piece(self.__team, WANG, [0, 1], 3))
-            self.__pieces.append(Piece(self.__team, JANG, [0, 2], 4))
+            self.__pieces.append(Piece(self.__team, JANG, [0, 0], 4))
         # 나의 팀일 경우
         else:
             self.__pieces.append(Piece(self.__team, JA, [2, 1], 5))
-            self.__pieces.append(Piece(self.__team, SANG, [3, 2], 6))
+            self.__pieces.append(Piece(self.__team, SANG, [3, 0], 6))
             self.__pieces.append(Piece(self.__team, WANG, [3, 1], 7))
-            self.__pieces.append(Piece(self.__team, JANG, [3, 0], 8))
+            self.__pieces.append(Piece(self.__team, JANG, [3, 2], 8))
     
     def get_pieces(self):
         return self.__pieces
@@ -126,6 +131,7 @@ class Jangi:
         self.display = Display()
         self.input = Input()
         self.running = True
+        self.start_time = time.time()
     ########################################
     #def init(self):
         #self.__num_moves = 0  
@@ -198,16 +204,16 @@ class Jangi:
                     return piece.get_num()
         return -1
 
-    def is_piece_moved(self, piece_num):
-        if piece_num > 4:
-            pieces = self.get_team("you").get_pieces()
-        else:
-            pieces = self.get_team("me").get_pieces()
+    #def is_piece_moved(self, piece_num):
+    #    if piece_num > 4:
+    #        pieces = self.get_team("you").get_pieces()
+    #    else:
+    #        pieces = self.get_team("me").get_pieces()
 
-        for piece in pieces:
-            if piece.get_num() == piece_num:
-                return piece.getMoved() ### getMoved()가 무엇을 가져오는지?
-        return -1 ### 위치 이거 맞음? TAB
+    #    for piece in pieces:
+    #        if piece.get_num() == piece_num:
+    #            return piece.getMoved() ### getMoved()가 무엇을 가져오는지?
+    #    return -1 ### 위치 이거 맞음? TAB
     ###########################################
     def get_cell(self, pos):
         return self.board[pos[0]][pos[1]]
@@ -237,23 +243,23 @@ class Jangi:
         return self.turn
     def nextTurn(self):
         if self.currentTurn() == ME:
-            return YOU # 턴이 다시 'ME'로 덧칠되나??
-            print('턴 전환 성공') # 출력은 되는데 턴 전환이 안되는 에러
+            return YOU 
         else:
             return ME
     def changeTurn(self):
         self.turn = self.nextTurn()
-
+    def resetTime(self):
+        self.start_time = time.time()
     def checkPieceType(self, i, j, PIECETYPE):
         return PIECETYPE == self.get_piece_type(i,j)
 #################################################################
     def ja_move(self, src_i, src_j, target_i, target_j):
         if self.get_cell(src_i, src_j)[0] == "]" :
-            if target_j - src_j == 1 :
+            if target_i - src_i == -1 :
                 return True
             else: return False
         else: 
-            if target_j - src_j == -1 :
+            if target_i - src_i == 1 :
                 return True
             else: return False
     def sang_move(self, src_i, src_j, target_i, target_j):
@@ -292,9 +298,9 @@ class Jangi:
         if not isSrcTurn or not isValid_from or not isValid_to:
             return False
         moveSuccess = False
-        moved = self.is_piece_moved(src_piece_num)
+        #moved = self.is_piece_moved(src_piece_num)
         print('PieceNumber:', src_piece_num)
-        print('moved:',moved)
+        #print('moved:',moved)
         
 
         
@@ -307,9 +313,9 @@ class Jangi:
                 self.board[i_from][j_from] = EMPTY
                 self.board[i_to][j_to] = src_piece_team + JA
                 
-            elif self.ja_attack(i_from, j_from, i_to, j_to):
-                print(campStr+": 자 공격")
-                moveSuccess = True
+            #elif self.ja_attack(i_from, j_from, i_to, j_to):
+            #    print(campStr+": 자 공격")
+            #    moveSuccess = True
                 # 말을 잡는 코드를 따로 구현해야할 지에 대한 여부를 판단해야함
 
         elif self.checkPieceType(i_from, j_from, SANG):
@@ -318,9 +324,9 @@ class Jangi:
                 moveSuccess = True
                 self.board[i_from][j_from] = EMPTY
                 self.board[i_to][j_to] = src_piece_team + SANG
-            elif self.sang_attack(i_from, j_from, i_to, j_to):
-                print(campStr+": 상 공격")
-                moveSuccess = True
+            #elif self.sang_attack(i_from, j_from, i_to, j_to):
+            #    print(campStr+": 상 공격")
+            #    moveSuccess = True
 
         elif self.checkPieceType(i_from, j_from, WANG):
             if self.wang_move(i_from, j_from, i_to, j_to):
@@ -328,9 +334,9 @@ class Jangi:
                 moveSuccess = True
                 self.board[i_from][j_from] = EMPTY
                 self.board[i_to][j_to] = src_piece_team + WANG
-            elif self.wang_attack(i_from, j_from, i_to, j_to):
-                print(campStr+": 왕 공격")
-                moveSuccess = True
+            #elif self.wang_attack(i_from, j_from, i_to, j_to):
+            #    print(campStr+": 왕 공격")
+            #    moveSuccess = True
 
         elif self.checkPieceType(i_from, j_from, JANG):
             if self.jang_move(i_from, j_from, i_to, j_to):
@@ -338,9 +344,9 @@ class Jangi:
                 moveSuccess = True
                 self.board[i_from][j_from] = EMPTY
                 self.board[i_to][j_to] = src_piece_team + JANG
-            elif self.jang_attack(i_from, j_from, i_to, j_to):
-                print(campStr+": 장 공격")
-                moveSuccess = True                
+            #elif self.jang_attack(i_from, j_from, i_to, j_to):
+            #    print(campStr+": 장 공격")
+            #    moveSuccess = True                
                 
                 
         # 말이 성공적으로 움직였다면
@@ -349,6 +355,8 @@ class Jangi:
             #self.update_board()
                # 상대편 차례
             self.changeTurn()
+            self.resetTime() # 말이 움직이면 시간초 리셋하는 알고리즘이기 때문에 포로 배치 같은 경우 따로 설정해줘야함
+            
 
 
 
