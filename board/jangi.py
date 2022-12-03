@@ -248,13 +248,28 @@ class Jangi:
         return PIECETYPE == self.get_piece_type(i,j)
 #################################################################
     def ja_move(self, src_i, src_j, target_i, target_j):
-        return True
+        if self.get_cell(src_i, src_j)[0] == "]" :
+            if target_j - src_j == 1 :
+                return True
+            else: return False
+        else: 
+            if target_j - src_j == -1 :
+                return True
+            else: return False
     def sang_move(self, src_i, src_j, target_i, target_j):
-        return True
+        if abs((target_i - src_i)*(target_j - src_j)) == 1 :
+            return True
+        else: return False
     def wang_move(self, src_i, src_j, target_i, target_j):
-        return True
+        if abs(target_i - src_i) == 1 or abs(target_j - src_j) == 1:
+            return True
+        else: return False
     def jang_move(self, src_i, src_j, target_i, target_j):
-        return True
+        if abs((target_i - src_i)*(target_j - src_j)) == 1:
+            return False
+        elif abs(target_i - src_i) == 1 or abs(target_j - src_j) == 1:
+            return True
+        else: return False
 #################################################################
     def move(self, i_from, j_from, i_to, j_to):
         if i_from == i_to and j_from == j_to:
