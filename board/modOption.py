@@ -1,6 +1,9 @@
+import subprocess
+
 from PyQt5.QtWidgets import *
 from selectRoom import RoomSelect
-from offlineGame import OfflineGame
+import util
+
 
 class ModOption(QDialog, QWidget):
 
@@ -12,16 +15,17 @@ class ModOption(QDialog, QWidget):
             room.exec()
             self.show()
         else:
-            self.hide()
-            game = OfflineGame()
-            game.show()
-            game.exec()
-            self.show()
+            subprocess.call("py main.py", shell=True)
+
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         mainLayout = QVBoxLayout()
+        mainLayout.setContentsMargins(130, 0, 130, 0)
+        self.setGeometry(300, 300, 500, 500)
+        util.center(self)
+        mainLayout.addStretch()
         # QVBoxLayout
         loginLabel = QLabel()
         loginLabel.setText("Mod Option Select")
@@ -34,6 +38,7 @@ class ModOption(QDialog, QWidget):
         mainLayout.addWidget(loginLabel)
         mainLayout.addWidget(button)
         mainLayout.addWidget(button2)
+        mainLayout.addStretch()
 
         self.setLayout(mainLayout)
         self.setWindowTitle('???')

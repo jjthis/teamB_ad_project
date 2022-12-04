@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import *
+import util
 
 
 class MakeRoom(QDialog, QWidget):
@@ -10,6 +11,10 @@ class MakeRoom(QDialog, QWidget):
         super().__init__(parent)
 
         mainLayout = QVBoxLayout()
+        mainLayout.setContentsMargins(130, 0, 130, 0)
+        self.setGeometry(300, 300, 500, 500)
+        util.center(self)
+        mainLayout.addStretch()
         # QVBoxLayout
         loginLabel = QLabel()
         loginLabel.setText("Mod Option Select")
@@ -22,6 +27,7 @@ class MakeRoom(QDialog, QWidget):
         mainLayout.addWidget(loginLabel)
         mainLayout.addWidget(button)
         mainLayout.addWidget(button2)
+        mainLayout.addStretch()
 
         self.setLayout(mainLayout)
         self.setWindowTitle('???')

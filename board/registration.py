@@ -26,6 +26,10 @@ class Registration(QDialog, QWidget):
         super().__init__(parent)
 
         mainLayout = QVBoxLayout()
+        mainLayout.setContentsMargins(130, 0, 130, 0)
+        self.setGeometry(300, 300, 500, 500)
+        util.center(self)
+        mainLayout.addStretch()
         # QVBoxLayout
         loginLabel = QLabel()
         loginLabel.setText("Registration")
@@ -44,6 +48,7 @@ class Registration(QDialog, QWidget):
         mainLayout.addWidget(self.pw)
         mainLayout.addWidget(self.message)
         mainLayout.addWidget(button)
+        mainLayout.addStretch()
 
         self.setLayout(mainLayout)
         self.setWindowTitle('???')
