@@ -5,7 +5,7 @@ import util
 import requests
 
 
-class LogIn(QDialog, QWidget):
+class LogIn(QWidget):
 
     def login(self, id, pw):
         hashedPW = util.getHash(pw)
@@ -32,7 +32,7 @@ class LogIn(QDialog, QWidget):
             elif r.content == b'102':
                 self.message.setText("잘못된 비밀번호 입니다.")
             else:
-                self.hide()
+                self.close()
                 options = ModOption()
                 options.show()
                 options.exec_()

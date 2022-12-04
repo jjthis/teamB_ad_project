@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import *
 from login import LogIn
+from selectRoom import RoomSelect
 from PyQt5.uic.properties import QtWidgets
 
 if __name__ == '__main__':
@@ -8,4 +9,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     log = LogIn()
     log.show()
-    sys.exit(app.exec_())
+    app.exec_()

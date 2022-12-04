@@ -5,21 +5,17 @@ from selectRoom import RoomSelect
 import util
 
 
-class ModOption(QDialog):
-
+class ModOption(QDialog, QWidget):
     def click(self):
         if self.sender().text() == "online":
-            # self.hide()
-            room = RoomSelect()
+            room = RoomSelect(self)
             room.show()
             room.exec_()
-            # self.show()
         else:
             subprocess.call("py main.py", shell=True)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
         mainLayout = QVBoxLayout()
         mainLayout.setContentsMargins(130, 0, 130, 0)
         self.setGeometry(300, 300, 500, 500)
