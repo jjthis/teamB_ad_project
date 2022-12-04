@@ -267,8 +267,8 @@ class Jangi:
             return True
         else: return False
     def wang_move(self, src_i, src_j, target_i, target_j):
-        if abs(target_i - src_i) == 1 or abs(target_j - src_j) == 1:
-            return True
+        if abs(target_i - src_i) <= 1 and abs(target_j - src_j) <= 1 :
+                return True
         else: return False
     def jang_move(self, src_i, src_j, target_i, target_j):
         if abs((target_i - src_i)*(target_j - src_j)) == 1:
@@ -276,6 +276,12 @@ class Jangi:
         elif abs(target_i - src_i) == 1 or abs(target_j - src_j) == 1:
             return True
         else: return False
+    def is_alreadyIn(self, src_i, src_j, target_i, target_j):
+        if self.board[target_i][target_j] == EMPTY :
+            return True
+        elif self.get_cell(target_i,target_j)[0] == self.get_cell(src_i, src_j)[0] :
+            return False
+        else: return True
 #################################################################
     def move(self, i_from, j_from, i_to, j_to):
         if i_from == i_to and j_from == j_to:

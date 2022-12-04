@@ -55,7 +55,7 @@ while jangi.running:
                 jangi.input.target_piece_type = jangi.get_cell(mi, mj)
                 jangi.input.is_target_set = True
         # 조건을 만족했을 때 이동
-        if jangi.input.is_src_set and jangi.input.is_target_set:
+        if jangi.input.is_src_set and jangi.input.is_target_set and jangi.is_alreadyIn(src_i, src_j, target_i, target_j):
             print("From:",src_i,src_j,"/ To:",target_i,target_j)
             jangi.move(src_i, src_j, target_i, target_j)
             jangi.input.is_src_set = False
