@@ -34,4 +34,4 @@ class RoomSelect(QDialog, QWidget):
         self.mainLayout.addStretch()
 
         self.setLayout(self.mainLayout)
-        self.setWindowTitle('???')
+        self.setWindowTitle('십이장기')

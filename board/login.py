@@ -17,7 +17,7 @@ class LogIn(QDialog, QWidget):
             self.hide()
             reg = Registration()
             reg.show()
-            reg.exec()
+            reg.exec_()
             self.show()
         else:
             for i in self.id.text():
@@ -35,7 +35,8 @@ class LogIn(QDialog, QWidget):
                 self.hide()
                 options = ModOption()
                 options.show()
-                options.exec()
+                options.exec_()
+                # self.show()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -70,4 +71,4 @@ class LogIn(QDialog, QWidget):
         mainLayout.addStretch()
 
         self.setLayout(mainLayout)
-        self.setWindowTitle('???')
+        self.setWindowTitle('십이장기')

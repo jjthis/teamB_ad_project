@@ -51,4 +51,4 @@ class Registration(QDialog, QWidget):
         mainLayout.addStretch()
 
         self.setLayout(mainLayout)
-        self.setWindowTitle('???')
+        self.setWindowTitle('십이장기')

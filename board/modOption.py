@@ -5,18 +5,17 @@ from selectRoom import RoomSelect
 import util
 
 
-class ModOption(QDialog, QWidget):
+class ModOption(QDialog):
 
     def click(self):
         if self.sender().text() == "online":
-            self.hide()
+            # self.hide()
             room = RoomSelect()
             room.show()
-            room.exec()
-            self.show()
+            room.exec_()
+            # self.show()
         else:
             subprocess.call("py main.py", shell=True)
-
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -41,4 +40,4 @@ class ModOption(QDialog, QWidget):
         mainLayout.addStretch()
 
         self.setLayout(mainLayout)
-        self.setWindowTitle('???')
+        self.setWindowTitle('십이장기')
