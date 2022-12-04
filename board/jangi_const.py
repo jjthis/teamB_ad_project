@@ -12,6 +12,9 @@ JANGI_PIECE_IMAGE_JANG = "./pieceimg/JANG.png"
 
 JANGI_ITEM_IMAGE_TIME = "./pieceimg/addTime.png"
 JANGI_ITEM_IMAGE_MULLIGAN = "./pieceimg/Mulligan.png"
+
+JANGI_SOUND_BGM = "./pieceimg/bgm.mp3"
+JANGI_SOUND_MOVE = "./pieceimg/move.wav"
 # 색상 저장
 JANGI_PIECE_SRC_COLOR = (80, 80, 240)
 JANGI_PIECE_TARGET_COLOR = (240, 80, 80)

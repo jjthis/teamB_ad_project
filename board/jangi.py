@@ -39,6 +39,7 @@ class Display:
         self.SURFACE.fill((100,100,100))
 
     def prep_piece_picture(self):
+        
         # 이미지 크기 조정
         self.img_piece_ja = pygame.transform.scale(self.img_piece_ja, (JANGI_PIECES_PIXELS,JANGI_PIECES_PIXELS))
         self.img_piece_wang = pygame.transform.scale(self.img_piece_wang, (JANGI_PIECES_PIXELS,JANGI_PIECES_PIXELS))
@@ -357,11 +358,12 @@ class Jangi:
                 
         # 말이 성공적으로 움직였다면
         if moveSuccess: 
-             # 보드 업데이트
+            # 보드 업데이트
             #self.update_board()
                # 상대편 차례
             self.changeTurn()
-            self.resetTime() # 말이 움직이면 시간초 리셋하는 알고리즘이기 때문에 포로 배치 같은 경우 따로 설정해줘야함
+            self.resetTime()
+            # 말이 움직이면 시간초 리셋하는 알고리즘이기 때문에 포로 배치 같은 경우 따로 설정해줘야함
             
 
 

@@ -15,9 +15,11 @@ pygame.init()
 pygame.display.set_caption("십이장기")
 clock = pygame.time.Clock()
 FPS = 60
+sound_move = pygame.mixer.Sound(JANGI_SOUND_MOVE)
+pygame.mixer.music.load(JANGI_SOUND_BGM)
+pygame.mixer.music.play(-1)
 
 while jangi.running:
-    dt = clock.tick(FPS) # 추후 사용이 될까싶어 일단 만들어놓음
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             jangi.running = False
@@ -35,34 +37,37 @@ while jangi.running:
                 jangi.input.mouse_clicked = False
     if jangi.input.mouse_clicked:
         jangi.input.mouse_clicked = False
-        isValid, mi, mj = jangi.posPixel2Num(JANGI_BOARD_PADDING, JANGI_BOARD_PADDING, jangi.input.mx, jangi.input.my, JANGI_BOARD_CELL_PIXELS) 
-        #print(isValid, mi, mj)
-        if not isValid:
-            jangi.input.mouse_pressed = False
-            is_src_set = False
-            is_target_set = False
-            continue
-        else:
+        print(jangi.input.mx, jangi.input.my)
+        if  (JANGI_BOARD_PADDING <= jangi.input.mx and jangi.input.mx <= JANGI_BOARD_PADDING+3*JANGI_BOARD_CELL_PIXELS) and (JANGI_BOARD_PADDING <= jangi.input.my and jangi.input.my <= JANGI_BOARD_PADDING+4*JANGI_BOARD_CELL_PIXELS):
+            isValid, mi, mj = jangi.posPixel2Num(JANGI_BOARD_PADDING, JANGI_BOARD_PADDING, jangi.input.mx, jangi.input.my, JANGI_BOARD_CELL_PIXELS) 
             #print(isValid, mi, mj)
-            if not jangi.input.is_src_set:
-                src_i, src_j = (mi, mj)
-                jangi.input.src_rect = (mj*JANGI_BOARD_CELL_PIXELS + JANGI_BOARD_PADDING, mi*JANGI_BOARD_CELL_PIXELS + JANGI_BOARD_PADDING, JANGI_BOARD_CELL_PIXELS, JANGI_BOARD_CELL_PIXELS)
-                jangi.input.src_piece_type = jangi.get_cell(mi, mj)
-                jangi.input.is_src_set = True
+            if not isValid:
+                jangi.input.mouse_pressed = False
+                is_src_set = False
+                is_target_set = False
+                continue
             else:
-                target_i, target_j = (mi, mj)
-                jangi.input.target_rect = (mj*JANGI_BOARD_CELL_PIXELS + JANGI_BOARD_PADDING, mi*JANGI_BOARD_CELL_PIXELS + JANGI_BOARD_PADDING, JANGI_BOARD_CELL_PIXELS, JANGI_BOARD_CELL_PIXELS)
-                jangi.input.target_piece_type = jangi.get_cell(mi, mj)
-                jangi.input.is_target_set = True
-        # 조건을 만족했을 때 이동
-        if jangi.input.is_src_set and jangi.input.is_target_set and jangi.is_alreadyIn(src_i, src_j, target_i, target_j):
-            print("From:",src_i,src_j,"/ To:",target_i,target_j)
-            jangi.move(src_i, src_j, target_i, target_j)
-            jangi.input.is_src_set = False
-            jangi.input.is_target_set = False
-            jangi.print_board()
-            print('Turn:', jangi.turn)
-            print('--------------------------------')
+                #print(isValid, mi, mj)
+                if not jangi.input.is_src_set:
+                    src_i, src_j = (mi, mj)
+                    jangi.input.src_rect = (mj*JANGI_BOARD_CELL_PIXELS + JANGI_BOARD_PADDING, mi*JANGI_BOARD_CELL_PIXELS + JANGI_BOARD_PADDING, JANGI_BOARD_CELL_PIXELS, JANGI_BOARD_CELL_PIXELS)
+                    jangi.input.src_piece_type = jangi.get_cell(mi, mj)
+                    jangi.input.is_src_set = True
+                else:
+                    target_i, target_j = (mi, mj)
+                    jangi.input.target_rect = (mj*JANGI_BOARD_CELL_PIXELS + JANGI_BOARD_PADDING, mi*JANGI_BOARD_CELL_PIXELS + JANGI_BOARD_PADDING, JANGI_BOARD_CELL_PIXELS, JANGI_BOARD_CELL_PIXELS)
+                    jangi.input.target_piece_type = jangi.get_cell(mi, mj)
+                    jangi.input.is_target_set = True
+            # 조건을 만족했을 때 이동
+            if jangi.input.is_src_set and jangi.input.is_target_set and jangi.is_alreadyIn(src_i, src_j, target_i, target_j):
+                print("From:",src_i,src_j,"/ To:",target_i,target_j)
+                jangi.move(src_i, src_j, target_i, target_j)
+                jangi.input.is_src_set = False
+                jangi.input.is_target_set = False
+                jangi.print_board()
+                sound_move.play()
+                print('Turn:', jangi.turn)
+                print('--------------------------------')
     # 턴 당 시간초 디스플레이
     remainingTime = 90 - (time.time() - jangi.start_time)
     txt = f"Time: {remainingTime:.1f}"
@@ -110,5 +115,6 @@ while jangi.running:
         
 
     pygame.display.update()
+    clock.tick(FPS) # 초당 프레임 조정
 
 pygame.quit()
