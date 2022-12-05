@@ -1,15 +1,26 @@
+import subprocess
+
 from PyQt5.QtWidgets import *
+from selectRoom import RoomSelect
+import util
 
 
-class OfflineGame(QDialog, QWidget):
-
+class ModOption(QDialog, QWidget):
     def click(self):
-        pass
+        if self.sender().text() == "online":
+            room = RoomSelect(self)
+            room.show()
+            room.exec_()
+        else:
+            subprocess.call("py main.py", shell=True)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
         mainLayout = QVBoxLayout()
+        mainLayout.setContentsMargins(130, 0, 130, 0)
+        self.setGeometry(300, 300, 500, 500)
+        util.center(self)
+        mainLayout.addStretch()
         # QVBoxLayout
         loginLabel = QLabel()
         loginLabel.setText("Mod Option Select")
@@ -22,6 +33,7 @@ class OfflineGame(QDialog, QWidget):
         mainLayout.addWidget(loginLabel)
         mainLayout.addWidget(button)
         mainLayout.addWidget(button2)
+        mainLayout.addStretch()
 
         self.setLayout(mainLayout)
-        self.setWindowTitle('???')
+        self.setWindowTitle('십이장기')

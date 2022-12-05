@@ -2,10 +2,11 @@ from PyQt5.QtWidgets import *
 from registration import Registration
 from modOption import ModOption
 import util
+import user
 import requests
 
 
-class LogIn(QDialog, QWidget):
+class LogIn(QWidget):
 
     def login(self, id, pw):
         hashedPW = util.getHash(pw)
@@ -17,7 +18,7 @@ class LogIn(QDialog, QWidget):
             self.hide()
             reg = Registration()
             reg.show()
-            reg.exec()
+            reg.exec_()
             self.show()
         else:
             for i in self.id.text():
@@ -32,15 +33,23 @@ class LogIn(QDialog, QWidget):
             elif r.content == b'102':
                 self.message.setText("잘못된 비밀번호 입니다.")
             else:
-                self.hide()
+                self.close()
+                requests.get('http://adteamb.dothome.co.kr/roomDelete.php?id='
+                             + self.id.text())
+                user.User.id = self.id.text()
                 options = ModOption()
                 options.show()
-                options.exec()
+                options.exec_()
+                # self.show()
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         mainLayout = QVBoxLayout()
+        mainLayout.setContentsMargins(130, 0, 130, 0)
+        self.setGeometry(300, 300, 500, 500)
+        util.center(self)
+        mainLayout.addStretch()
         # QVBoxLayout
         loginLabel = QLabel()
         loginLabel.setText("Login")
@@ -63,6 +72,7 @@ class LogIn(QDialog, QWidget):
         mainLayout.addWidget(self.message)
         mainLayout.addWidget(button)
         mainLayout.addWidget(button2)
+        mainLayout.addStretch()
 
         self.setLayout(mainLayout)
-        self.setWindowTitle('???')
+        self.setWindowTitle('십이장기')
