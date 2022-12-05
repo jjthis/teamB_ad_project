@@ -20,7 +20,7 @@ class MakeRoom(QDialog, QWidget):
                             + 'id=' + user.User.id + '&'
                             + 'name=' + self.rname.text() + '&'
                             + 'gip=' + requests.get("http://ip.jsontest.com").json()['ip'] + '&'
-                            + 'sid=' + socket.gethostbyname(socket.gethostname())
+                            + 'sip=' + socket.gethostbyname(socket.gethostname())
                             ).text
 
     def click(self):
