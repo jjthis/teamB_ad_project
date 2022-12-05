@@ -21,9 +21,6 @@ class RoomSelect(QDialog):
             room.show()
             room.exec()
             self.makeList()
-            # print("asffnjssnfsjfnsjfnj")
-            # self.accept()
-            # self.show()
         pass
 
     def getRoomList(self):
@@ -34,11 +31,11 @@ class RoomSelect(QDialog):
         self.roomList = self.getRoomList()
         # print(self.roomList)
         for i in self.roomList:
-            self.lis.addItem(i['name']+"\nOwner: "+i['userID'])
+            self.lis.addItem(i['name'] + "\nOwner: " + i['userID'])
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.par=parent
+        self.par = parent
         self.setWindowModality(Qt.ApplicationModal)
         self.mainLayout = QVBoxLayout()
 

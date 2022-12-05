@@ -8,6 +8,7 @@ def getHash(strs):
 
 
 def center(self):
+    pass
     qr = self.frameGeometry()
     cp = QDesktopWidget().availableGeometry().center()
     qr.moveCenter(cp)

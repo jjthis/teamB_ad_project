@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from registration import Registration
 from modOption import ModOption
 import util
+import user
 import requests
 
 
@@ -33,6 +34,9 @@ class LogIn(QWidget):
                 self.message.setText("잘못된 비밀번호 입니다.")
             else:
                 self.close()
+                requests.get('http://adteamb.dothome.co.kr/roomDelete.php?id='
+                             + self.id.text())
+                user.User.id = self.id.text()
                 options = ModOption()
                 options.show()
                 options.exec_()
