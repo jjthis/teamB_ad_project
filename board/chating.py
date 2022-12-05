@@ -201,6 +201,9 @@ def func():
         pygame.display.update()
         clock.tick(FPS)  # 초당 프레임 조정
     # sleep(2000)
+
+    requests.get('http://adteamb.dothome.co.kr/roomDelete.php?id='
+                 + sys.argv[1])
     pygame.quit()
 
 
