@@ -18,6 +18,10 @@ FPS = 60
 sound_move = pygame.mixer.Sound(JANGI_SOUND_MOVE)
 pygame.mixer.music.load(JANGI_SOUND_BGM)
 pygame.mixer.music.play(-1)
+#  게임 종료
+gameover = False
+gamewin = False
+gamedefeated = False
 
 while jangi.running:
     for event in pygame.event.get():
@@ -69,7 +73,7 @@ while jangi.running:
                 print('Turn:', jangi.turn)
                 print('--------------------------------')
     # 턴 당 시간초 디스플레이
-    remainingTime = 90 - (time.time() - jangi.start_time)
+    remainingTime = 1 - (time.time() - jangi.start_time)
     txt = f"Time: {remainingTime:.1f}"
     jangi.display.SURFACE.fill((100,100,100))
     draw_text(txt, 32, (10,10), (255, 255, 255))
@@ -113,6 +117,12 @@ while jangi.running:
                 jangi.display.SURFACE.blit(jangi.display.you_piece_list[sprite_num], 
                 (M*JANGI_BOARD_CELL_PIXELS+JANGI_BOARD_PADDING+10, N*JANGI_BOARD_CELL_PIXELS+JANGI_BOARD_PADDING+10))            
         
+    if remainingTime <= 0:
+        gameover = True
+    if gameover:
+        jangi.display.SURFACE.fill((100,100,100))
+        draw_text("GAME OVER", 50, (JANGI_BOARD_SIZE_G/2 - 150, JANGI_BOARD_SIZE_S/2 - 275), (255, 255, 255))
+        #remainingTime
 
     pygame.display.update()
     clock.tick(FPS) # 초당 프레임 조정
