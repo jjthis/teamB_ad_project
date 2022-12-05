@@ -23,6 +23,7 @@ class UserInfo:
 
 
 def executeOnMain(data):
+    print(data)
     if data == "start":
         func()
         return
@@ -217,16 +218,30 @@ class Chatting(QWidget):
         if self.sender().text() == "open":
             # func()
             # 서버 IP 및 열어줄 포트
-            HOST = '10.223.119.229'
+            HOST = '127.0.0.1'
+            # port는 위 서버에서 설정한 9999로 접속을 한다.
             PORT = 9999
-
+            # 소켓을 만든다.
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client_socket.connect((HOST, PORT))
 
-            start_new_thread(Client.recv_data, (client_socket, self.socketSignal))
-            print('>> Connect Server')
+            # connect함수로 접속을 한다.
+            print("시도")
+            client_socket.connect((HOST, PORT))
+            print("connected")
             UserInfo.sendTarget = client_socket
             UserInfo.sendTarget.send(str("start").encode())
+
+            # 10번의 루프로 send receive를 한다.
+            # HOST = ''
+            # PORT = 9991
+            #
+            # client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # client_socket.connect((HOST, PORT))
+            #
+            # # start_new_thread(Client.recv_data, (client_socket, self.socketSignal))
+            # print('>> Connect Server')
+            # UserInfo.sendTarget = client_socket
+            # UserInfo.sendTarget.send(str("start").encode())
 
 
     def __init__(self, parent=None):
