@@ -65,6 +65,12 @@ while jangi.running:
             # 조건을 만족했을 때 이동
             if jangi.input.is_src_set and jangi.input.is_target_set and jangi.is_alreadyIn(src_i, src_j, target_i, target_j):
                 print("From:",src_i,src_j,"/ To:",target_i,target_j)
+                import json
+                print(json.dumps({"cmd": "move",
+                            "scr_i": 3 - src_i,
+                            "scr_j": 2 - src_j,
+                            "target_i": 3 - target_i,
+                            "target_j": 2 - target_j}))
                 jangi.move(src_i, src_j, target_i, target_j)
                 jangi.input.is_src_set = False
                 jangi.input.is_target_set = False
@@ -73,7 +79,7 @@ while jangi.running:
                 print('Turn:', jangi.turn)
                 print('--------------------------------')
     # 턴 당 시간초 디스플레이
-    remainingTime = 1 - (time.time() - jangi.start_time)
+    remainingTime = 100 - (time.time() - jangi.start_time)
     txt = f"Time: {remainingTime:.1f}"
     jangi.display.SURFACE.fill((100,100,100))
     draw_text(txt, 32, (10,10), (255, 255, 255))

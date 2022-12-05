@@ -26,7 +26,7 @@ class MakeRoom(QDialog, QWidget):
     def click(self):
         self.close()
         self.insertRoom()
-        subprocess.call("py main.py", shell=True)
+        subprocess.call("py chating.py "+user.User.id, shell=True)
         pass
 
     def __init__(self, parent=None):

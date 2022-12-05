@@ -1,5 +1,9 @@
+import subprocess
+
 import requests
 import json
+
+import user
 from makeRoom import MakeRoom
 
 from PyQt5.QtWidgets import *
@@ -14,7 +18,11 @@ class RoomSelect(QDialog):
         if self.sender().text() == "refresh":
             self.makeList()
         elif self.sender().text() == "select":
-            print(self.lis.currentRow())
+            pos = self.lis.currentRow()
+            if pos == -1:
+                return
+            subprocess.call("py client_game.py "+self.roomList[pos]['SocketIP']+" "+user.User.id, shell=True)
+
         else:
             # self.hide()
             room = MakeRoom(self.par)

@@ -14,24 +14,28 @@ import util
 from jangi_const import *
 from jangi import *
 import pygame
+import sys
 
 
 class UserInfo:
     sendTarget = None
     move = False
     moveCmd = {}
+    chat = None
 
 
 def executeOnMain(data):
     print(data)
-    if data == "start":
-        func()
-        return
     data = json.loads(data)
-    if data['cmd'] == 'move':
+    if data['cmd'] == "start":
+        UserInfo.chat.addItem(data['id'] + ' joined')
+        func()
+    elif data['cmd'] == 'move':
         UserInfo.move = True
         UserInfo.moveCmd = data
         pass
+    elif data['cmd'] == 'chat':
+        UserInfo.chat.addItem(data['id'] + ': ' + data['data'])
 
 
 def func():
@@ -39,7 +43,6 @@ def func():
     jangi.print_board()
     print('Turn:', jangi.turn)
     jangi.turn = YOU
-
 
     # 텍스트 디스플레이 함수
     def draw_text(txt, size, pos, color):
@@ -106,36 +109,31 @@ def func():
                         jangi.input.target_piece_type = jangi.get_cell(mi, mj)
                         jangi.input.is_target_set = True
                 # 조건을 만족했을 때 이동
-                if jangi.turn == '[' and jangi.input.is_src_set and jangi.input.is_target_set and jangi.is_alreadyIn(
+                if jangi.turn == ME and jangi.input.is_src_set and jangi.input.is_target_set and jangi.is_alreadyIn(
                         src_i, src_j, target_i,
                         target_j):
                     print("From:", src_i, src_j, "/ To:", target_i, target_j)
                     jangi.move(src_i, src_j, target_i, target_j)  # 3,2
 
                     UserInfo.sendTarget.send(json.dumps({"cmd": "move",
-                                                         "scr_i": 3 - src_i,
-                                                         "scr_j": 2 - src_j,
+                                                         "src_i": 3 - src_i,
+                                                         "src_j": 2 - src_j,
                                                          "target_i": 3 - target_i,
-                                                         "target_j": 2 - target_j}))
+                                                         "target_j": 2 - target_j}).encode())
                     jangi.input.is_src_set = False
                     jangi.input.is_target_set = False
                     jangi.print_board()
                     sound_move.play()
                     print('Turn:', jangi.turn)
                     print('--------------------------------')
-        if jangi.turn == ']' and UserInfo.move:
+        if jangi.turn == YOU and UserInfo.move:
             src_i = UserInfo.moveCmd['src_i']
             src_j = UserInfo.moveCmd['src_j']
             target_i = UserInfo.moveCmd['target_i']
             target_j = UserInfo.moveCmd['target_j']
             UserInfo.move = False
             print("From:", src_i, src_j, "/ To:", target_i, target_j)
-            jangi.move(src_i, src_j, target_i, target_j)  # 3,2
-            UserInfo.sendTarget.send(json.dumps({"cmd": "move",
-                                                 "scr_i": 3 - src_i,
-                                                 "scr_j": 2 - src_j,
-                                                 "target_i": 3 - target_i,
-                                                 "target_j": 2 - target_j}))
+            jangi.move(src_i, src_j, target_i, target_j)
             jangi.input.is_src_set = False
             jangi.input.is_target_set = False
             jangi.print_board()
@@ -218,7 +216,7 @@ class Chatting(QWidget):
         if self.sender().text() == "open":
             # func()
             # 서버 IP 및 열어줄 포트
-            HOST = '127.0.0.1'
+            HOST = sys.argv[1]
             # port는 위 서버에서 설정한 9999로 접속을 한다.
             PORT = 9999
             # 소켓을 만든다.
@@ -228,8 +226,11 @@ class Chatting(QWidget):
             print("시도")
             client_socket.connect((HOST, PORT))
             print("connected")
+
+            start_new_thread(Client.recv_data, (client_socket, self.socketSignal))
+
             UserInfo.sendTarget = client_socket
-            UserInfo.sendTarget.send(str("start").encode())
+            UserInfo.sendTarget.send(json.dumps({"cmd": "start", "id": sys.argv[2]}).encode())
 
             # 10번의 루프로 send receive를 한다.
             # HOST = ''
@@ -238,11 +239,13 @@ class Chatting(QWidget):
             # client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             # client_socket.connect((HOST, PORT))
             #
-            # # start_new_thread(Client.recv_data, (client_socket, self.socketSignal))
             # print('>> Connect Server')
             # UserInfo.sendTarget = client_socket
             # UserInfo.sendTarget.send(str("start").encode())
-
+        else:
+            self.lis.addItem(sys.argv[2]+": "+self.edit.text())
+            UserInfo.sendTarget.send(json.dumps({"cmd": "chat", "id": sys.argv[2], "data": self.edit.text()}).encode())
+            self.edit.setText("")
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -257,6 +260,7 @@ class Chatting(QWidget):
         self.mainLayout.addStretch()
         # QVBoxLayout
         self.lis = QListWidget()
+        UserInfo.chat = self.lis
         # self.makeList()
         blay = QHBoxLayout()
         self.edit = QLineEdit()
