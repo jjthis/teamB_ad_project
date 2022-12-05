@@ -217,7 +217,7 @@ class Chatting(QWidget):
         if self.sender().text() == "open":
             # func()
             # 서버 IP 및 열어줄 포트
-            HOST = '127.0.0.1'
+            HOST = '10.223.119.229'
             PORT = 9999
 
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
