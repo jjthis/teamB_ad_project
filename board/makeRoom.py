@@ -25,8 +25,8 @@ class MakeRoom(QDialog, QWidget):
 
     def click(self):
         self.insertRoom()
-        import chating
-        room = chating.Chatting(self)
+        import server_game
+        room = server_game.Chatting(self)
         room.show()
         room.exec_()
         pass
