@@ -21,7 +21,12 @@ class RoomSelect(QDialog):
             pos = self.lis.currentRow()
             if pos == -1:
                 return
-            subprocess.call("py client_game.py "+self.roomList[pos]['SocketIP']+" "+user.User.id, shell=True)
+            import chating
+            import userInfo
+            userInfo.UserInfo.socketIP = self.roomList[pos]['SocketIP']
+            room = chating.Chatting(self)
+            room.show()
+            room.exec_()
 
         else:
             # self.hide()

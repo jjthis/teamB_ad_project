@@ -15,13 +15,7 @@ from jangi_const import *
 from jangi import *
 import pygame
 import sys
-
-
-class UserInfo:
-    sendTarget = None
-    move = False
-    moveCmd = {}
-    chat = None
+from userInfo import UserInfo
 
 
 def executeOnMain(data):
@@ -216,7 +210,7 @@ class Chatting(QWidget):
         if self.sender().text() == "open":
             # func()
             # 서버 IP 및 열어줄 포트
-            HOST = sys.argv[1]
+            HOST = UserInfo.socketIP
             # port는 위 서버에서 설정한 9999로 접속을 한다.
             PORT = 9999
             # 소켓을 만든다.
@@ -230,7 +224,7 @@ class Chatting(QWidget):
             start_new_thread(Client.recv_data, (client_socket, self.socketSignal))
 
             UserInfo.sendTarget = client_socket
-            UserInfo.sendTarget.send(json.dumps({"cmd": "start", "id": sys.argv[2]}).encode())
+            UserInfo.sendTarget.send(json.dumps({"cmd": "start", "id": UserInfo.id}).encode())
 
             # 10번의 루프로 send receive를 한다.
             # HOST = ''
@@ -243,8 +237,8 @@ class Chatting(QWidget):
             # UserInfo.sendTarget = client_socket
             # UserInfo.sendTarget.send(str("start").encode())
         else:
-            self.lis.addItem(sys.argv[2]+": "+self.edit.text())
-            UserInfo.sendTarget.send(json.dumps({"cmd": "chat", "id": sys.argv[2], "data": self.edit.text()}).encode())
+            self.lis.addItem(UserInfo.id + ": " + self.edit.text())
+            UserInfo.sendTarget.send(json.dumps({"cmd": "chat", "id": UserInfo.id, "data": self.edit.text()}).encode())
             self.edit.setText("")
 
     def __init__(self, parent=None):

@@ -16,19 +16,14 @@ from jangi_const import *
 from jangi import *
 import pygame
 
-
-class UserInfo:
-    sendTarget = None
-    move = False
-    chat = None
-    moveCmd = {}
+from userInfo import UserInfo
 
 
 def executeOnMain(data):
     print(data)
     data = json.loads(data)
     if data['cmd'] == "start":
-        UserInfo.sendTarget.send(json.dumps({"cmd": "start", "id": sys.argv[1]}).encode())
+        UserInfo.sendTarget.send(json.dumps({"cmd": "start", "id": UserInfo.id}).encode())
         func()
         return
     elif data['cmd'] == 'move':
@@ -37,6 +32,7 @@ def executeOnMain(data):
         pass
     elif data['cmd'] == 'chat':
         UserInfo.chat.addItem(data['id'] + ': ' + data['data'])
+
 
 def func():
     jangi = Jangi()
@@ -203,11 +199,11 @@ def func():
     # sleep(2000)
 
     requests.get('http://adteamb.dothome.co.kr/roomDelete.php?id='
-                 + sys.argv[1])
+                 + UserInfo.id)
     pygame.quit()
 
 
-class Chatting(QWidget):
+class Chatting(QDialog):
     socketSignal = pyqtSignal(object)  # must be defined in class level
 
     def click(self):
@@ -236,8 +232,8 @@ class Chatting(QWidget):
                 # 에러가 발생하면 서버 소켓을 닫는다.
                 server_socket.close()
         else:
-            self.lis.addItem(sys.argv[1]+": "+self.edit.text())
-            UserInfo.sendTarget.send(json.dumps({"cmd": "chat", "id": sys.argv[1], "data": self.edit.text()}).encode())
+            self.lis.addItem(UserInfo.id + ": " + self.edit.text())
+            UserInfo.sendTarget.send(json.dumps({"cmd": "chat", "id": UserInfo.id, "data": self.edit.text()}).encode())
             self.edit.setText("")
 
     def __init__(self, parent=None):

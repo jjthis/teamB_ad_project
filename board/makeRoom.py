@@ -24,9 +24,11 @@ class MakeRoom(QDialog, QWidget):
                             ).text
 
     def click(self):
-        self.close()
         self.insertRoom()
-        subprocess.call("py chating.py "+user.User.id, shell=True)
+        import chating
+        room = chating.Chatting(self)
+        room.show()
+        room.exec_()
         pass
 
     def __init__(self, parent=None):

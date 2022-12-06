@@ -4,6 +4,7 @@ from modOption import ModOption
 import util
 import user
 import requests
+from userInfo import UserInfo
 
 
 class LogIn(QWidget):
@@ -37,6 +38,7 @@ class LogIn(QWidget):
                 requests.get('http://adteamb.dothome.co.kr/roomDelete.php?id='
                              + self.id.text())
                 user.User.id = self.id.text()
+                UserInfo.id = self.id.text()
                 options = ModOption()
                 options.show()
                 options.exec_()
