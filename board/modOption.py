@@ -12,7 +12,8 @@ class ModOption(QDialog, QWidget):
             room.show()
             room.exec_()
         else:
-            subprocess.call("py main.py", shell=True)
+            import main
+            main.func()
 
     def __init__(self, parent=None):
         super().__init__(parent)

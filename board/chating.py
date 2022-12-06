@@ -3,7 +3,7 @@ from _thread import start_new_thread
 from time import sleep
 import socket
 import Server
-
+import asyncio
 import requests
 import json
 from makeRoom import MakeRoom
@@ -201,52 +201,56 @@ def func():
     requests.get('http://adteamb.dothome.co.kr/roomDelete.php?id='
                  + UserInfo.id)
     pygame.quit()
+    UserInfo.sendTarget.close()
 
 
 class Chatting(QDialog):
     socketSignal = pyqtSignal(object)  # must be defined in class level
 
     def click(self):
-        if self.sender().text() == "open":
-            # 소켓을 만든다.
-            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM);
-            # 소켓 레벨과 데이터 형태를 설정한다.
-            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1);
-            # 서버는 복수 ip를 사용하는 pc의 경우는 ip를 지정하고 그렇지 않으면 None이 아닌 ''로 설정한다.
-            # 포트는 pc내에서 비어있는 포트를 사용한다. cmd에서 netstat -an | find "LISTEN"으로 확인할 수 있다.
-            print("bind")
-            server_socket.bind(('', 9999))
-            # server 설정이 완료되면 listen를 시작한다.
-            print("listen")
-            server_socket.listen(1)
-            try:
-                client_socket, addr = server_socket.accept()
-                print("받음")
-                UserInfo.sendTarget = client_socket
-                # 쓰레드를 이용해서 client 접속 대기를 만들고 다시 accept로 넘어가서 다른 client를 대기한다.
-                th = threading.Thread(target=Server.threaded, args=(client_socket, addr, self.socketSignal))
-                th.start()
-            except:
-                print("server")
-            finally:
-                # 에러가 발생하면 서버 소켓을 닫는다.
-                server_socket.close()
-        else:
-            self.lis.addItem(UserInfo.id + ": " + self.edit.text())
-            UserInfo.sendTarget.send(json.dumps({"cmd": "chat", "id": UserInfo.id, "data": self.edit.text()}).encode())
-            self.edit.setText("")
+        self.lis.addItem(UserInfo.id + ": " + self.edit.text())
+        UserInfo.sendTarget.send(json.dumps({"cmd": "chat", "id": UserInfo.id, "data": self.edit.text()}).encode())
+        self.edit.setText("")
+
+    def socket_start(self):
+
+        # 소켓을 만든다.
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # 소켓 레벨과 데이터 형태를 설정한다.
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # 서버는 복수 ip를 사용하는 pc의 경우는 ip를 지정하고 그렇지 않으면 None이 아닌 ''로 설정한다.
+        # 포트는 pc내에서 비어있는 포트를 사용한다. cmd에서 netstat -an | find "LISTEN"으로 확인할 수 있다.
+        print("bind")
+        server_socket.bind(('', 9999))
+        # server 설정이 완료되면 listen를 시작한다.
+        print("listen")
+        server_socket.listen(1)
+        try:
+            client_socket, addr = server_socket.accept()
+            print("받음")
+            UserInfo.sendTarget = client_socket
+            # 쓰레드를 이용해서 client 접속 대기를 만들고 다시 accept로 넘어가서 다른 client를 대기한다.
+            th = threading.Thread(target=Server.threaded, args=(client_socket, addr, UserInfo.socketSignal))
+            th.start()
+        except:
+            print("server")
+        finally:
+            # 에러가 발생하면 서버 소켓을 닫는다.
+            server_socket.close()
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.socketSignal.connect(executeOnMain)
+        UserInfo.socketSignal = self.socketSignal
+        # asyncio.run(self.socket_start())
+        threading.Thread(target=self.socket_start).start()
         self.setWindowModality(Qt.ApplicationModal)
         self.mainLayout = QVBoxLayout()
 
-        self.mainLayout.setContentsMargins(130, 0, 130, 0)
-        self.setGeometry(300, 300, 500, 500)
+        # self.mainLayout.setContentsMargins(130, 0, 130, 0)
+        self.setGeometry(300, 300, 300, 500)
         util.center(self)
-        self.mainLayout.addStretch()
         # QVBoxLayout
         self.lis = QListWidget()
         UserInfo.chat = self.lis
@@ -259,17 +263,10 @@ class Chatting(QDialog):
         button.setFixedHeight(50)
         button.setSizePolicy(QSizePolicy.Expanding, 0)
         button.clicked.connect(self.click)
-        button2 = QToolButton()
-        button2.setText("open")
-        button2.setFixedHeight(50)
-        button2.setSizePolicy(QSizePolicy.Expanding, 0)
-        button2.clicked.connect(self.click)
-        self.mainLayout.addWidget(button2)
         self.mainLayout.addWidget(self.lis)
         blay.addWidget(self.edit)
         blay.addWidget(button)
         self.mainLayout.addLayout(blay)
-        self.mainLayout.addStretch()
 
         self.setLayout(self.mainLayout)
         self.setWindowTitle('십이장기')

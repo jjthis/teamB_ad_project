@@ -1,3 +1,4 @@
+import threading
 from _thread import start_new_thread
 from time import sleep
 import socket
@@ -198,60 +199,48 @@ def func():
         clock.tick(FPS)  # 초당 프레임 조정
     # sleep(2000)
     pygame.quit()
+    UserInfo.sendTarget.close()
 
 
 import Client
 
 
-class Chatting(QWidget):
+class Chatting(QDialog):
     socketSignal = pyqtSignal(object)  # must be defined in class level
 
     def click(self):
-        if self.sender().text() == "open":
-            # func()
-            # 서버 IP 및 열어줄 포트
-            HOST = UserInfo.socketIP
-            # port는 위 서버에서 설정한 9999로 접속을 한다.
-            PORT = 9999
-            # 소켓을 만든다.
-            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.lis.addItem(UserInfo.id + ": " + self.edit.text())
+        UserInfo.sendTarget.send(json.dumps({"cmd": "chat", "id": UserInfo.id, "data": self.edit.text()}).encode())
+        self.edit.setText("")
 
-            # connect함수로 접속을 한다.
-            print("시도")
-            client_socket.connect((HOST, PORT))
-            print("connected")
+    def socket_start(self):
+        HOST = UserInfo.socketIP
+        # port는 위 서버에서 설정한 9999로 접속을 한다.
+        PORT = 9999
+        # 소켓을 만든다.
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-            start_new_thread(Client.recv_data, (client_socket, self.socketSignal))
+        # connect함수로 접속을 한다.
+        print("시도")
+        client_socket.connect((HOST, PORT))
+        print("connected")
 
-            UserInfo.sendTarget = client_socket
-            UserInfo.sendTarget.send(json.dumps({"cmd": "start", "id": UserInfo.id}).encode())
+        start_new_thread(Client.recv_data, (client_socket, UserInfo.socketSignal))
 
-            # 10번의 루프로 send receive를 한다.
-            # HOST = ''
-            # PORT = 9991
-            #
-            # client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # client_socket.connect((HOST, PORT))
-            #
-            # print('>> Connect Server')
-            # UserInfo.sendTarget = client_socket
-            # UserInfo.sendTarget.send(str("start").encode())
-        else:
-            self.lis.addItem(UserInfo.id + ": " + self.edit.text())
-            UserInfo.sendTarget.send(json.dumps({"cmd": "chat", "id": UserInfo.id, "data": self.edit.text()}).encode())
-            self.edit.setText("")
+        UserInfo.sendTarget = client_socket
+        UserInfo.sendTarget.send(json.dumps({"cmd": "start", "id": UserInfo.id}).encode())
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.socketSignal.connect(executeOnMain)
+        UserInfo.socketSignal = self.socketSignal
         self.setWindowModality(Qt.ApplicationModal)
         self.mainLayout = QVBoxLayout()
-
-        self.mainLayout.setContentsMargins(130, 0, 130, 0)
-        self.setGeometry(300, 300, 500, 500)
+        threading.Thread(target=self.socket_start).start()
+        # self.mainLayout.setContentsMargins(130, 0, 130, 0)
+        self.setGeometry(300, 300, 300, 500)
         util.center(self)
-        self.mainLayout.addStretch()
         # QVBoxLayout
         self.lis = QListWidget()
         UserInfo.chat = self.lis
@@ -264,18 +253,10 @@ class Chatting(QWidget):
         button.setFixedHeight(50)
         button.setSizePolicy(QSizePolicy.Expanding, 0)
         button.clicked.connect(self.click)
-        button2 = QToolButton()
-        button2.setText("open")
-        button2.setFixedHeight(50)
-        button2.setSizePolicy(QSizePolicy.Expanding, 0)
-        button2.clicked.connect(self.click)
-        self.mainLayout.addWidget(button2)
         self.mainLayout.addWidget(self.lis)
         blay.addWidget(self.edit)
         blay.addWidget(button)
         self.mainLayout.addLayout(blay)
-        self.mainLayout.addStretch()
-
         self.setLayout(self.mainLayout)
         self.setWindowTitle('십이장기')
 

@@ -21,10 +21,10 @@ class RoomSelect(QDialog):
             pos = self.lis.currentRow()
             if pos == -1:
                 return
-            import chating
+            import client_game
             import userInfo
             userInfo.UserInfo.socketIP = self.roomList[pos]['SocketIP']
-            room = chating.Chatting(self)
+            room = client_game.Chatting(self)
             room.show()
             room.exec_()
 
@@ -41,7 +41,7 @@ class RoomSelect(QDialog):
 
     def makeList(self):
         self.lis.clear()
-        self.roomList = self.getRoomList()
+        self.roomList = self.getRoomList()[1:]
         # print(self.roomList)
         for i in self.roomList:
             self.lis.addItem(i['name'] + "\nOwner: " + i['userID'])

@@ -5,3 +5,4 @@ class UserInfo:
     chat = None
     id = ""
     socketIP = None
+    socketSignal = None
