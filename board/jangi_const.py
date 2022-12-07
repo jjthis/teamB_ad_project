@@ -9,6 +9,7 @@ JANGI_PIECE_IMAGE_JA = "./pieceimg/JA.png"
 JANGI_PIECE_IMAGE_SANG = "./pieceimg/SANG.png"
 JANGI_PIECE_IMAGE_WANG = "./pieceimg/WANG.png"
 JANGI_PIECE_IMAGE_JANG = "./pieceimg/JANG.png"
+JANGI_PIECE_IMAGE_HU = "./pieceimg/HU.png"
 
 JANGI_ITEM_IMAGE_TIME = "./pieceimg/addTime.png"
 JANGI_ITEM_IMAGE_MULLIGAN = "./pieceimg/Mulligan.png"
@@ -24,6 +25,7 @@ JANG = 'j'
 SANG = 's'
 WANG = 'w'
 JA = 'a'
+HU = 'h'
 # 진영
 YOU = '['
 ME = ']'
